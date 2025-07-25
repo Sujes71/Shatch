@@ -7,6 +7,11 @@ class ShelfWindow: NSWindow {
     private let animationDuration: TimeInterval = 0.25
     private var isShown = false
     private var hideTimer: Timer?
+    let dropAreaHeight: CGFloat = 80
+    let itemHeight: CGFloat = 48
+    let maxVisibleItems: Int = 5
+    let minHeight: CGFloat
+    let maxHeight: CGFloat
 
     init() {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
@@ -18,6 +23,9 @@ class ShelfWindow: NSWindow {
             width: fullWidth,
             height: windowHeight
         )
+        minHeight = dropAreaHeight
+        maxHeight = dropAreaHeight + CGFloat(maxVisibleItems) * itemHeight
+        let shelfViewFrame = NSRect(x: 0, y: 0, width: fullWidth, height: minHeight)
         super.init(
             contentRect: hiddenRect,
             styleMask: [.borderless],
@@ -33,7 +41,7 @@ class ShelfWindow: NSWindow {
         self.titleVisibility = .hidden
         self.titlebarAppearsTransparent = true
         self.isMovableByWindowBackground = false
-        let shelfView = ShelfView(frame: NSRect(x: 0, y: 0, width: fullWidth, height: windowHeight))
+        let shelfView = ShelfView(frame: shelfViewFrame, window: self)
         shelfView.wantsLayer = true
         shelfView.layer?.cornerRadius = 28
         shelfView.layer?.masksToBounds = true
@@ -65,15 +73,20 @@ class ShelfWindow: NSWindow {
         guard !isShown else { return }
         isShown = true
         hideTimer?.invalidate()
+        let itemCount = (contentView as? ShelfView)?.fileCount ?? 0
+        let visibleItems = min(itemCount, maxVisibleItems)
+        let newHeight = dropAreaHeight + CGFloat(visibleItems) * itemHeight
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-        let y = screenFrame.midY - windowHeight / 2
+        let y = screenFrame.midY - newHeight / 2
         let shownRect = NSRect(
             x: screenFrame.maxX - fullWidth,
             y: y,
             width: fullWidth,
-            height: windowHeight
+            height: newHeight
         )
         setFrame(shownRect, display: true, animate: true)
+        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: newHeight)
+        (contentView as? ShelfView)?.layout()
         scheduleAutoHide()
     }
 
@@ -96,5 +109,16 @@ class ShelfWindow: NSWindow {
             height: windowHeight
         )
         setFrame(hiddenRect, display: true, animate: true)
+    }
+
+    func updateWindowHeight(forItemCount count: Int) {
+        let visibleItems = min(count, maxVisibleItems)
+        let newHeight = dropAreaHeight + CGFloat(visibleItems) * itemHeight
+        let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
+        let y = screenFrame.midY - newHeight / 2
+        let newRect = NSRect(x: frame.origin.x, y: y, width: frame.width, height: newHeight)
+        setFrame(newRect, display: true, animate: true)
+        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: newHeight)
+        (contentView as? ShelfView)?.layout()
     }
 } 
