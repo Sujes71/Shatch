@@ -5,6 +5,8 @@ class ShelfWindow: NSWindow {
     private let fullWidth: CGFloat = 240
     private let windowHeight: CGFloat = 400
     private let animationDuration: TimeInterval = 0.25
+    private let showAnimationDuration: TimeInterval = 0.3
+    private let hideAnimationDuration: TimeInterval = 0.2
     var isShown = false
     private var hideTimer: Timer?
     let dropAreaHeight: CGFloat = 80
@@ -49,6 +51,16 @@ class ShelfWindow: NSWindow {
         shelfView.layer?.masksToBounds = true
         self.contentView = shelfView
         startEdgeDetection()
+        
+        // Animación inicial suave
+        self.alphaValue = 0.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            NSAnimationContext.runAnimationGroup({ context in
+                context.duration = 0.4
+                context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                self.animator().alphaValue = 0.8
+            })
+        }
     }
 
     private func startEdgeDetection() {
@@ -85,9 +97,31 @@ class ShelfWindow: NSWindow {
             width: fullWidth,
             height: useHeight
         )
-        setFrame(shownRect, display: true, animate: true)
-        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: useHeight)
-        (contentView as? ShelfView)?.layout()
+        
+        // Animación suave de entrada
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = showAnimationDuration
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            
+            // Animar frame
+            animator().setFrame(shownRect, display: true)
+            
+            // Animar opacidad (fade in)
+            animator().alphaValue = 1.0
+            
+            // Animar escala (slight bounce effect)
+            let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+            scaleAnimation.fromValue = 0.95
+            scaleAnimation.toValue = 1.0
+            scaleAnimation.duration = showAnimationDuration
+            scaleAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            contentView?.layer?.add(scaleAnimation, forKey: "scale")
+        }) {
+            // Completado
+            (self.contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: self.frame.width, height: useHeight)
+            (self.contentView as? ShelfView)?.layout()
+        }
+        
         scheduleAutoHide()
     }
 
@@ -114,9 +148,30 @@ class ShelfWindow: NSWindow {
             width: fullWidth,
             height: minHeight
         )
-        setFrame(hiddenRect, display: true, animate: true)
-        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: minHeight)
-        (contentView as? ShelfView)?.layout()
+        
+        // Animación suave de salida
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = hideAnimationDuration
+            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            
+            // Animar frame
+            animator().setFrame(hiddenRect, display: true)
+            
+            // Animar opacidad (fade out parcial)
+            animator().alphaValue = 0.8
+            
+            // Animar escala (slight shrink)
+            let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+            scaleAnimation.fromValue = 1.0
+            scaleAnimation.toValue = 0.98
+            scaleAnimation.duration = hideAnimationDuration
+            scaleAnimation.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            contentView?.layer?.add(scaleAnimation, forKey: "scale")
+        }) {
+            // Completado
+            (self.contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: self.frame.width, height: self.minHeight)
+            (self.contentView as? ShelfView)?.layout()
+        }
     }
 
     func updateWindowHeight(forItemCount count: Int) {
@@ -126,8 +181,18 @@ class ShelfWindow: NSWindow {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
         let y = screenFrame.midY - newHeight / 2
         let newRect = NSRect(x: frame.origin.x, y: y, width: frame.width, height: newHeight)
-        setFrame(newRect, display: true, animate: true)
-        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: newHeight)
-        (contentView as? ShelfView)?.layout()
+        
+        // Animación suave de cambio de altura
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = 0.2
+            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            
+            // Animar frame
+            animator().setFrame(newRect, display: true)
+        }) {
+            // Completado
+            (self.contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: self.frame.width, height: newHeight)
+            (self.contentView as? ShelfView)?.layout()
+        }
     }
 } 
