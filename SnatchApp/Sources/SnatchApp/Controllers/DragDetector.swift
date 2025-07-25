@@ -8,7 +8,13 @@ class DragDetector {
     weak var delegate: DragDetectorDelegate?
     
     func handleDrag(with urls: [URL]) {
-        let items = urls.map { FileItem(url: $0) }
-        delegate?.didAddFiles(items)
+        guard !urls.isEmpty else { return }
+        let item: FileItem
+        if urls.count == 1 {
+            item = FileItem(url: urls[0])
+        } else {
+            item = FileItem(urls: urls)
+        }
+        delegate?.didAddFiles([item])
     }
 } 

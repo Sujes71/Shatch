@@ -2,7 +2,7 @@ import Cocoa
 
 class ShelfWindow: NSWindow {
     private let tabWidth: CGFloat = 16
-    private let fullWidth: CGFloat = 320
+    private let fullWidth: CGFloat = 240
     private let windowHeight: CGFloat = 400
     private let animationDuration: TimeInterval = 0.25
     private var isShown = false

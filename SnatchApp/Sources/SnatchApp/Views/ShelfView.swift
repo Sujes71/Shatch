@@ -1,4 +1,5 @@
 import Cocoa
+import UniformTypeIdentifiers
 
 class ShelfView: NSView, DragDetectorDelegate {
     private var files: [FileItem] = []
@@ -64,7 +65,9 @@ class ShelfView: NSView, DragDetectorDelegate {
         setNeedsDisplay(NSRect(x: 0, y: bounds.height - dropAreaHeight, width: bounds.width, height: dropAreaHeight))
         let pasteboard = sender.draggingPasteboard
         let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] ?? []
-        let newFiles = urls.filter { url in !files.contains(where: { $0.url == url }) }
+        let newFiles = urls.filter { url in
+            !files.contains(where: { $0.urls.contains(url) })
+        }
         guard !newFiles.isEmpty else { return false }
         dragDetector.handleDrag(with: newFiles)
         return true
@@ -113,6 +116,8 @@ class ShelfView: NSView, DragDetectorDelegate {
         let index = sender.tag
         guard files.indices.contains(index) else { return }
         files.remove(at: index)
+        updateDocumentView()
+        windowRef?.updateWindowHeight(forItemCount: files.count)
         setNeedsDisplay(bounds)
     }
 
@@ -128,26 +133,79 @@ class ShelfView: NSView, DragDetectorDelegate {
     }
 
     private func beginDrag(for file: FileItem, at index: Int, event: NSEvent) {
-        let pasteboardItem = NSPasteboardItem()
-        pasteboardItem.setString(file.url.absoluteString, forType: .fileURL)
-        let draggingItem = NSDraggingItem(pasteboardWriter: pasteboardItem)
-        let y = bounds.height - dropAreaHeight - CGFloat(index + 1) * itemHeight
-        let rect = NSRect(x: 16, y: y, width: bounds.width - 32, height: itemHeight)
-        let dragImage = makeDragImage(for: file)
-        draggingItem.setDraggingFrame(rect, contents: dragImage)
+        let draggingItems: [NSDraggingItem] = file.urls.enumerated().map { (i, url) in
+            let pasteboardItem = NSPasteboardItem()
+            pasteboardItem.setString(url.absoluteString, forType: .fileURL)
+            let draggingItem = NSDraggingItem(pasteboardWriter: pasteboardItem)
+            let y = bounds.height - dropAreaHeight - CGFloat(index + 1 + i) * itemHeight
+            let rect = NSRect(x: 16, y: y, width: bounds.width - 32, height: itemHeight)
+            // Icono real de cada archivo
+            let icon = NSWorkspace.shared.icon(forFile: url.path)
+            icon.size = NSSize(width: 128, height: 128)
+            let image = NSImage(size: NSSize(width: 128, height: 128))
+            image.lockFocus()
+            icon.draw(in: NSRect(x: 0, y: 0, width: 128, height: 128))
+            image.unlockFocus()
+            draggingItem.setDraggingFrame(rect, contents: image)
+            return draggingItem
+        }
         draggingIndex = index
-        beginDraggingSession(with: [draggingItem], event: event, source: self)
+        beginDraggingSession(with: draggingItems, event: event, source: self)
     }
 
     private func makeDragImage(for file: FileItem) -> NSImage {
         let iconSize: CGFloat = 128
-        let icon = NSWorkspace.shared.icon(forFile: file.url.path)
-        icon.size = NSSize(width: iconSize, height: iconSize)
-        let image = NSImage(size: NSSize(width: iconSize, height: iconSize))
-        image.lockFocus()
-        icon.draw(in: NSRect(x: 0, y: 0, width: iconSize, height: iconSize))
-        image.unlockFocus()
-        return image
+        if file.urls.count == 1 {
+            let icon = NSWorkspace.shared.icon(forFile: file.urls[0].path)
+            icon.size = NSSize(width: iconSize, height: iconSize)
+            let image = NSImage(size: NSSize(width: iconSize, height: iconSize))
+            image.lockFocus()
+            icon.draw(in: NSRect(x: 0, y: 0, width: iconSize, height: iconSize))
+            image.unlockFocus()
+            return image
+        } else {
+            // Grupo: iconos apilados
+            var icons: [NSImage] = []
+            var seenTypes = Set<String>()
+            for url in file.urls {
+                let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? nil
+                let icon: NSImage
+                if let type = type {
+                    if type == .folder {
+                        icon = NSWorkspace.shared.icon(for: UTType.folder)
+                    } else if type.conforms(to: .image) {
+                        icon = NSWorkspace.shared.icon(for: UTType.jpeg)
+                    } else if type.conforms(to: .plainText) {
+                        icon = NSWorkspace.shared.icon(for: UTType.plainText)
+                    } else {
+                        icon = NSWorkspace.shared.icon(forFile: url.path)
+                    }
+                    if !seenTypes.contains(type.identifier) {
+                        icons.append(icon)
+                        seenTypes.insert(type.identifier)
+                    }
+                } else {
+                    icon = NSWorkspace.shared.icon(forFile: url.path)
+                    icons.append(icon)
+                }
+                if icons.count == 3 { break }
+            }
+            // Si hay menos de 3 tipos, repite el primero
+            while icons.count < 3 {
+                icons.append(icons.first ?? NSWorkspace.shared.icon(for: UTType.folder))
+            }
+            // Componer imagen apilada
+            let stackOffset: CGFloat = 24
+            let image = NSImage(size: NSSize(width: iconSize + stackOffset * 2, height: iconSize + stackOffset * 2))
+            image.lockFocus()
+            for (i, icon) in icons.prefix(3).enumerated().reversed() {
+                icon.size = NSSize(width: iconSize, height: iconSize)
+                let offset = CGFloat(i) * stackOffset
+                icon.draw(in: NSRect(x: offset, y: offset, width: iconSize, height: iconSize), from: .zero, operation: .sourceOver, fraction: 1.0)
+            }
+            image.unlockFocus()
+            return image
+        }
     }
 
     var fileCount: Int { files.count }
@@ -162,6 +220,8 @@ extension ShelfView: NSDraggingSource {
         if operation == .move, let index = draggingIndex, files.indices.contains(index) {
             files.remove(at: index)
             draggingIndex = nil
+            updateDocumentView()
+            windowRef?.updateWindowHeight(forItemCount: files.count)
             setNeedsDisplay(bounds)
         }
     }
@@ -179,10 +239,48 @@ class FileItemView: NSView {
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override func draw(_ dirtyRect: NSRect) {
-        let icon = NSWorkspace.shared.icon(forFile: file.url.path)
-        icon.size = NSSize(width: iconSize, height: iconSize)
-        let iconRect = NSRect(x: 24, y: (bounds.height - iconSize)/2, width: iconSize, height: iconSize)
-        icon.draw(in: iconRect)
+        if file.urls.count == 1 {
+            let icon = NSWorkspace.shared.icon(forFile: file.urls[0].path)
+            icon.size = NSSize(width: iconSize, height: iconSize)
+            let iconRect = NSRect(x: 24, y: (bounds.height - iconSize)/2, width: iconSize, height: iconSize)
+            icon.draw(in: iconRect)
+        } else {
+            // Grupo: iconos apilados solo de tipos distintos (sin límite)
+            var icons: [NSImage] = []
+            var seenTypes = Set<String>()
+            for url in file.urls {
+                let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? nil
+                let icon: NSImage
+                let typeId: String
+                if let type = type {
+                    typeId = type.identifier
+                    if type == .folder {
+                        icon = NSWorkspace.shared.icon(for: UTType.folder)
+                    } else if type.conforms(to: .image) {
+                        icon = NSWorkspace.shared.icon(for: UTType.jpeg)
+                    } else if type.conforms(to: .plainText) {
+                        icon = NSWorkspace.shared.icon(for: UTType.plainText)
+                    } else {
+                        icon = NSWorkspace.shared.icon(forFile: url.path)
+                    }
+                } else {
+                    typeId = url.pathExtension.lowercased()
+                    icon = NSWorkspace.shared.icon(forFile: url.path)
+                }
+                if !seenTypes.contains(typeId) {
+                    icons.append(icon)
+                    seenTypes.insert(typeId)
+                }
+            }
+            // Dibuja todos los iconos realmente distintos
+            let stackOffset: CGFloat = 8
+            for (i, icon) in icons.enumerated().reversed() {
+                icon.size = NSSize(width: iconSize, height: iconSize)
+                let offset = CGFloat(i) * stackOffset
+                let iconRect = NSRect(x: 24 + offset, y: (bounds.height - iconSize)/2 - offset, width: iconSize, height: iconSize)
+                icon.draw(in: iconRect)
+            }
+        }
         let nameAttrs: [NSAttributedString.Key: Any] = [
             .foregroundColor: SolarizedTheme.base0,
             .font: NSFont.systemFont(ofSize: 15)
