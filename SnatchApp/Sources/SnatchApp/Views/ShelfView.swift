@@ -23,7 +23,20 @@ class ShelfView: NSView, DragDetectorDelegate {
         super.init(frame: frameRect)
         self.wantsLayer = true
         self.layer?.backgroundColor = SolarizedTheme.base03.cgColor
-        registerForDraggedTypes([.fileURL])
+        // Registrar tipos para archivos y contenido web
+        registerForDraggedTypes([
+            .fileURL,
+            .string,
+            .html,
+            NSPasteboard.PasteboardType("public.tiff"),
+            NSPasteboard.PasteboardType("public.png"),
+            NSPasteboard.PasteboardType("public.jpeg"),
+            NSPasteboard.PasteboardType("public.url"),
+            NSPasteboard.PasteboardType("public.plain-text"),
+            NSPasteboard.PasteboardType("public.html"),
+            NSPasteboard.PasteboardType("public.image"),
+            NSPasteboard.PasteboardType("com.apple.web-inspector.plain-text")
+        ])
         dragDetector.delegate = self
         scrollView.hasVerticalScroller = true
         scrollView.documentView = documentView
@@ -68,13 +81,62 @@ class ShelfView: NSView, DragDetectorDelegate {
         isDragOver = false
         setNeedsDisplay(NSRect(x: 0, y: bounds.height - dropAreaHeight, width: bounds.width, height: dropAreaHeight))
         let pasteboard = sender.draggingPasteboard
-        let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] ?? []
+        
+        // Verificar si es un drag interno (desde el shelf)
+        if let source = sender.draggingSource as? NSView, source === self {
+            return false // No procesar drags internos
+        }
+        
+        // 1. Intentar manejar contenido web primero
+        if hasWebContent(pasteboard) {
+            dragDetector.handleWebContent(from: pasteboard)
+            return true
+        }
+        
+        // 2. Manejar archivos como antes
+        guard let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] else {
+            return false
+        }
+        
         let newFiles = urls.filter { url in
             !files.contains(where: { $0.urls.contains(url) })
         }
-        guard !newFiles.isEmpty else { return false }
-        dragDetector.handleDrag(with: newFiles)
+        
+        if !newFiles.isEmpty {
+            dragDetector.handleDrag(with: newFiles)
+        }
+        
         return true
+    }
+    
+    private func hasWebContent(_ pasteboard: NSPasteboard) -> Bool {
+        // Verificar si hay contenido web en el pasteboard
+        let webTypes: [NSPasteboard.PasteboardType] = [
+            .string,
+            .html,
+            NSPasteboard.PasteboardType("public.tiff"),
+            NSPasteboard.PasteboardType("public.png"),
+            NSPasteboard.PasteboardType("public.jpeg"),
+            NSPasteboard.PasteboardType("public.url"),
+            NSPasteboard.PasteboardType("public.plain-text"),
+            NSPasteboard.PasteboardType("public.html"),
+            NSPasteboard.PasteboardType("public.image"),
+            NSPasteboard.PasteboardType("com.apple.web-inspector.plain-text")
+        ]
+        
+        // Priorizar contenido web sobre archivos
+        for type in webTypes {
+            if pasteboard.availableType(from: [type]) != nil {
+                return true
+            }
+        }
+        
+        // Si no hay contenido web, verificar si hay archivos
+        if pasteboard.availableType(from: [.fileURL]) != nil {
+            return false // Es un archivo, no contenido web
+        }
+        
+        return false
     }
 
     func didAddFiles(_ files: [FileItem]) {
@@ -126,6 +188,8 @@ class ShelfView: NSView, DragDetectorDelegate {
         updateDocumentView()
         windowRef?.updateWindowHeight(forItemCount: files.count)
         setNeedsDisplay(bounds)
+        // Limpiar cache de contenido duplicado
+        dragDetector.clearContentCache()
     }
 
     private func fileAtPoint(_ point: NSPoint) -> (Int, FileItem)? {
@@ -259,6 +323,8 @@ class ShelfView: NSView, DragDetectorDelegate {
         updateDocumentView()
         windowRef?.updateWindowHeight(forItemCount: files.count)
         setNeedsDisplay(bounds)
+        // Limpiar cache de contenido duplicado
+        dragDetector.clearContentCache()
     }
 }
 
