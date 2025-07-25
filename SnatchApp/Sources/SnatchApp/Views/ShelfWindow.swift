@@ -87,6 +87,10 @@ class ShelfWindow: NSWindow {
         guard !isShown else { return }
         isShown = true
         hideTimer?.invalidate()
+        
+        // Cancelar animaciones previas
+        contentView?.layer?.removeAllAnimations()
+        
         let itemCount = (contentView as? ShelfView)?.fileCount ?? 0
         let useHeight = itemCount > 0 ? lastKnownHeight : minHeight
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
@@ -118,6 +122,8 @@ class ShelfWindow: NSWindow {
             contentView?.layer?.add(scaleAnimation, forKey: "scale")
         }) {
             // Completado
+            // Asegurar estado final correcto
+            self.alphaValue = 1.0
             (self.contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: self.frame.width, height: useHeight)
             (self.contentView as? ShelfView)?.layout()
         }
@@ -139,6 +145,10 @@ class ShelfWindow: NSWindow {
     func hideShelf() {
         guard isShown else { return }
         isShown = false
+        
+        // Cancelar animaciones previas
+        contentView?.layer?.removeAllAnimations()
+        
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
         let y = screenFrame.midY - minHeight / 2
         // Solo asoma 10px en el borde derecho
@@ -169,6 +179,8 @@ class ShelfWindow: NSWindow {
             contentView?.layer?.add(scaleAnimation, forKey: "scale")
         }) {
             // Completado
+            // Asegurar estado final correcto
+            self.alphaValue = 0.8
             (self.contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: self.frame.width, height: self.minHeight)
             (self.contentView as? ShelfView)?.layout()
         }
@@ -181,6 +193,15 @@ class ShelfWindow: NSWindow {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
         let y = screenFrame.midY - newHeight / 2
         let newRect = NSRect(x: frame.origin.x, y: y, width: frame.width, height: newHeight)
+        
+        // Solo animar si está visible y no está en medio de show/hide
+        guard isShown else {
+            // Si está oculto, solo actualizar el frame sin animar
+            setFrame(newRect, display: true, animate: false)
+            (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: newHeight)
+            (contentView as? ShelfView)?.layout()
+            return
+        }
         
         // Animación suave de cambio de altura
         NSAnimationContext.runAnimationGroup({ context in
