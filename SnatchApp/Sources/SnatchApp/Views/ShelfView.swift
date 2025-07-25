@@ -13,11 +13,13 @@ class ShelfView: NSView, DragDetectorDelegate {
     private let documentView: NSView
     private let maxVisibleItems: Int = 6
     private weak var windowRef: ShelfWindow?
+    private let clearButton: NSButton
 
     init(frame frameRect: NSRect, window: ShelfWindow) {
         self.windowRef = window
         scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: frameRect.width, height: frameRect.height - dropAreaHeight))
         documentView = NSView(frame: NSRect(x: 0, y: 0, width: frameRect.width, height: 0))
+        clearButton = NSButton(frame: NSRect(x: frameRect.width - 32, y: 8, width: 16, height: 16))
         super.init(frame: frameRect)
         self.wantsLayer = true
         self.layer?.backgroundColor = SolarizedTheme.base03.cgColor
@@ -27,6 +29,7 @@ class ShelfView: NSView, DragDetectorDelegate {
         scrollView.documentView = documentView
         scrollView.drawsBackground = false
         addSubview(scrollView)
+        setupClearButton()
     }
 
     required init?(coder: NSCoder) {
@@ -36,6 +39,7 @@ class ShelfView: NSView, DragDetectorDelegate {
     override func layout() {
         super.layout()
         scrollView.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bounds.height - dropAreaHeight)
+        clearButton.frame = NSRect(x: bounds.width - 32, y: 8, width: 16, height: 16)
         updateDocumentView()
     }
 
@@ -89,7 +93,7 @@ class ShelfView: NSView, DragDetectorDelegate {
         dropPath.fill()
         // Icono de descarga grande y centrado
         if let downloadIcon = NSImage(named: NSImage.touchBarDownloadTemplateName) {
-            let iconSize: CGFloat = 48
+            let iconSize: CGFloat = 36
             let iconRect = NSRect(
                 x: dropRect.midX - iconSize/2,
                 y: dropRect.midY - iconSize/2,
@@ -227,6 +231,25 @@ class ShelfView: NSView, DragDetectorDelegate {
     override func mouseExited(with event: NSEvent) {
         windowRef?.scheduleAutoHide()
     }
+
+    private func setupClearButton() {
+        clearButton.bezelStyle = .inline
+        clearButton.isBordered = false
+        clearButton.image = NSImage(named: NSImage.touchBarDeleteTemplateName)
+        clearButton.imagePosition = .imageOnly
+        clearButton.contentTintColor = SolarizedTheme.base0
+        clearButton.target = self
+        clearButton.action = #selector(clearAllFiles)
+        clearButton.toolTip = "Clear all files"
+        addSubview(clearButton)
+    }
+
+    @objc private func clearAllFiles() {
+        files.removeAll()
+        updateDocumentView()
+        windowRef?.updateWindowHeight(forItemCount: files.count)
+        setNeedsDisplay(bounds)
+    }
 }
 
 extension ShelfView: NSDraggingSource {
@@ -291,7 +314,7 @@ class FileItemView: NSView {
                 }
             }
             // Dibuja todos los iconos realmente distintos
-            let stackOffset: CGFloat = 8
+            let stackOffset: CGFloat = 6
             for (i, icon) in icons.enumerated().reversed() {
                 icon.size = NSSize(width: iconSize, height: iconSize)
                 let offset = CGFloat(i) * stackOffset
