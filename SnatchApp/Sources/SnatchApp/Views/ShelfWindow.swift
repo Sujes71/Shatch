@@ -21,9 +21,9 @@ class ShelfWindow: NSWindow {
         lastKnownHeight = minHeight
         let shelfViewFrame = NSRect(x: 0, y: 0, width: fullWidth, height: minHeight)
         let y = screenFrame.midY - minHeight / 2
-        // Completamente fuera de la pantalla al arrancar, con altura mínima
+        // Asoma 10px desde el arranque
         let hiddenRect = NSRect(
-            x: screenFrame.maxX + 10,
+            x: screenFrame.maxX - 10,
             y: y,
             width: fullWidth,
             height: minHeight
@@ -39,7 +39,7 @@ class ShelfWindow: NSWindow {
         self.level = .floating
         self.hasShadow = true
         self.ignoresMouseEvents = false
-        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         self.titleVisibility = .hidden
         self.titlebarAppearsTransparent = true
         self.isMovableByWindowBackground = false
@@ -91,24 +91,32 @@ class ShelfWindow: NSWindow {
         scheduleAutoHide()
     }
 
-    private func scheduleAutoHide() {
+    func scheduleAutoHide() {
         hideTimer?.invalidate()
         hideTimer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { [weak self] _ in
             self?.hideShelf()
         }
     }
 
+    func cancelAutoHide() {
+        hideTimer?.invalidate()
+    }
+
     func hideShelf() {
         guard isShown else { return }
         isShown = false
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
+        let y = screenFrame.midY - minHeight / 2
+        // Solo asoma 10px en el borde derecho
         let hiddenRect = NSRect(
-            x: screenFrame.maxX + 10, // fuera de la pantalla
-            y: frame.origin.y, // mantener la altura actual
-            width: frame.width,
-            height: frame.height
+            x: screenFrame.maxX - 10,
+            y: y,
+            width: fullWidth,
+            height: minHeight
         )
         setFrame(hiddenRect, display: true, animate: true)
+        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: frame.width, height: minHeight)
+        (contentView as? ShelfView)?.layout()
     }
 
     func updateWindowHeight(forItemCount count: Int) {

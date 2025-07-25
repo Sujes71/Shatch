@@ -87,15 +87,18 @@ class ShelfView: NSView, DragDetectorDelegate {
         let dropPath = NSBezierPath(roundedRect: dropRect.insetBy(dx: 8, dy: 8), xRadius: 16, yRadius: 16)
         (isDragOver ? SolarizedTheme.base01 : SolarizedTheme.base02).setFill()
         dropPath.fill()
-        // Dibuja el + grande
-        let plusAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SolarizedTheme.base0,
-            .font: NSFont.systemFont(ofSize: 40, weight: .bold)
-        ]
-        let plus = "+"
-        let plusSize = plus.size(withAttributes: plusAttrs)
-        let plusPoint = NSPoint(x: dropRect.midX - plusSize.width/2, y: dropRect.midY - plusSize.height/2)
-        plus.draw(at: plusPoint, withAttributes: plusAttrs)
+        // Icono de descarga grande y centrado
+        if let downloadIcon = NSImage(named: NSImage.touchBarDownloadTemplateName) {
+            let iconSize: CGFloat = 48
+            let iconRect = NSRect(
+                x: dropRect.midX - iconSize/2,
+                y: dropRect.midY - iconSize/2,
+                width: iconSize,
+                height: iconSize
+            )
+            downloadIcon.size = NSSize(width: iconSize, height: iconSize)
+            downloadIcon.draw(in: iconRect, from: .zero, operation: .sourceOver, fraction: 0.7)
+        }
     }
 
     override func mouseDown(with event: NSEvent) {
@@ -209,6 +212,21 @@ class ShelfView: NSView, DragDetectorDelegate {
     }
 
     var fileCount: Int { files.count }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        self.trackingAreas.forEach { self.removeTrackingArea($0) }
+        let area = NSTrackingArea(rect: self.bounds, options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect], owner: self, userInfo: nil)
+        self.addTrackingArea(area)
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        windowRef?.cancelAutoHide()
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        windowRef?.scheduleAutoHide()
+    }
 }
 
 extension ShelfView: NSDraggingSource {
