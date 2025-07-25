@@ -400,7 +400,11 @@ class FileItemView: NSView {
             if type == .folder {
                 return NSWorkspace.shared.icon(for: UTType.folder)
             } else if type.conforms(to: .image) {
-                return NSWorkspace.shared.icon(for: UTType.image)
+                // Intentar crear miniatura real de la imagen
+                if let thumbnail = getImageThumbnail(for: url) {
+                    return thumbnail
+                }
+                return createImageIcon()
             } else if type.conforms(to: .plainText) {
                 return NSWorkspace.shared.icon(for: UTType.plainText)
             } else if type.conforms(to: .html) {
@@ -412,7 +416,11 @@ class FileItemView: NSView {
         
         // Detectar tipo basado en extensión (para archivos locales normales)
         if pathExtension == "png" || pathExtension == "jpg" || pathExtension == "jpeg" || pathExtension == "gif" || pathExtension == "tiff" {
-            return NSWorkspace.shared.icon(for: UTType.image)
+            // Intentar crear miniatura real de la imagen
+            if let thumbnail = getImageThumbnail(for: url) {
+                return thumbnail
+            }
+            return createImageIcon()
         } else if pathExtension == "txt" || pathExtension == "text" {
             return NSWorkspace.shared.icon(for: UTType.plainText)
         } else if pathExtension == "pdf" {
@@ -424,7 +432,11 @@ class FileItemView: NSView {
         // Solo para archivos temporales generados por contenido web
         if url.path.contains("/tmp/") || url.path.contains("TemporaryItems") {
             if fileName.contains("image_") || fileName.contains("img_") {
-                return NSWorkspace.shared.icon(for: UTType.image)
+                // Intentar crear miniatura real de la imagen
+                if let thumbnail = getImageThumbnail(for: url) {
+                    return thumbnail
+                }
+                return createImageIcon()
             } else if fileName.contains("link_") || fileName.contains("url_") || fileName.contains("_175348") {
                 return NSWorkspace.shared.icon(for: UTType.plainText)
             } else if fileName.contains("text_") || fileName.contains("txt_") {
@@ -482,5 +494,34 @@ class FileItemView: NSView {
         }
         
         return pathExtension
+    }
+    
+    private func createImageIcon() -> NSImage {
+        // Intentar cargar la imagen real y crear una miniatura
+        return NSImage(size: NSSize(width: 32, height: 32))
+    }
+    
+    private func getImageThumbnail(for url: URL) -> NSImage? {
+        guard let image = NSImage(contentsOf: url) else { return nil }
+        
+        let thumbnailSize = NSSize(width: 32, height: 32)
+        let thumbnail = NSImage(size: thumbnailSize)
+        
+        thumbnail.lockFocus()
+        
+        // Calcular el rectángulo para mantener la proporción
+        let imageSize = image.size
+        let scale = min(thumbnailSize.width / imageSize.width, thumbnailSize.height / imageSize.height)
+        let scaledSize = NSSize(width: imageSize.width * scale, height: imageSize.height * scale)
+        let x = (thumbnailSize.width - scaledSize.width) / 2
+        let y = (thumbnailSize.height - scaledSize.height) / 2
+        let rect = NSRect(x: x, y: y, width: scaledSize.width, height: scaledSize.height)
+        
+        // Dibujar la imagen escalada
+        image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+        
+        thumbnail.unlockFocus()
+        
+        return thumbnail
     }
 } 
