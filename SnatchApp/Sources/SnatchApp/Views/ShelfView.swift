@@ -245,6 +245,16 @@ class ShelfView: NSView, DragDetectorDelegate {
     }
 
     @objc private func clearAllFiles() {
+        let alert = NSAlert()
+        alert.messageText = "Limpiar Snatch"
+        alert.informativeText = "¿Seguro que quieres borrar todos los archivos de la bandeja?"
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Borrar todo")
+        alert.addButton(withTitle: "Cancelar")
+        
+        let response = alert.runModal()
+        guard response == .alertFirstButtonReturn else { return }
+        
         files.removeAll()
         updateDocumentView()
         windowRef?.updateWindowHeight(forItemCount: files.count)

@@ -5,7 +5,7 @@ class ShelfWindow: NSWindow {
     private let fullWidth: CGFloat = 240
     private let windowHeight: CGFloat = 400
     private let animationDuration: TimeInterval = 0.25
-    private var isShown = false
+    var isShown = false
     private var hideTimer: Timer?
     let dropAreaHeight: CGFloat = 80
     let itemHeight: CGFloat = 48
