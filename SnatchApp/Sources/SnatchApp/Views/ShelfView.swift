@@ -316,11 +316,23 @@ class ShelfView: NSView, DragDetectorDelegate {
 
     @objc private func clearAllFiles() {
         let alert = NSAlert()
-        alert.messageText = "Limpiar Snatch"
-        alert.informativeText = "¿Seguro que quieres borrar todos los archivos de la bandeja?"
+        
+        // Detectar idioma del sistema
+        let languageCode = NSLocale.current.language.languageCode?.identifier ?? "en"
+        
+        if languageCode == "es" {
+            alert.messageText = "Limpiar Snatch"
+            alert.informativeText = "¿Seguro que quieres borrar todos los archivos de la bandeja?"
+            alert.addButton(withTitle: "Borrar todo")
+            alert.addButton(withTitle: "Cancelar")
+        } else {
+            alert.messageText = "Clear Snatch"
+            alert.informativeText = "Are you sure you want to delete all files from the shelf?"
+            alert.addButton(withTitle: "Delete All")
+            alert.addButton(withTitle: "Cancel")
+        }
+        
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "Borrar todo")
-        alert.addButton(withTitle: "Cancelar")
         
         let response = alert.runModal()
         guard response == .alertFirstButtonReturn else { return }

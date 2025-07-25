@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Snatch",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v13)
     ],
@@ -14,7 +15,10 @@ let package = Package(
         .executableTarget(
             name: "SnatchApp",
             dependencies: [],
-            path: "Sources/SnatchApp"
+            path: "Sources/SnatchApp",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 ) 
