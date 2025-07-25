@@ -124,16 +124,16 @@ class ShelfView: NSView, DragDetectorDelegate {
             NSPasteboard.PasteboardType("com.apple.web-inspector.plain-text")
         ]
         
-        // Priorizar contenido web sobre archivos
+        // Si hay archivos reales, NO es contenido web
+        if pasteboard.availableType(from: [.fileURL]) != nil {
+            return false // Es un archivo local, no contenido web
+        }
+        
+        // Verificar si hay contenido web
         for type in webTypes {
             if pasteboard.availableType(from: [type]) != nil {
                 return true
             }
-        }
-        
-        // Si no hay contenido web, verificar si hay archivos
-        if pasteboard.availableType(from: [.fileURL]) != nil {
-            return false // Es un archivo, no contenido web
         }
         
         return false
@@ -357,7 +357,8 @@ class FileItemView: NSView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override func draw(_ dirtyRect: NSRect) {
         if file.urls.count == 1 {
-            let icon = NSWorkspace.shared.icon(forFile: file.urls[0].path)
+            let url = file.urls[0]
+            let icon = getIconForFile(url)
             icon.size = NSSize(width: iconSize, height: iconSize)
             let iconRect = NSRect(x: 24, y: (bounds.height - iconSize)/2, width: iconSize, height: iconSize)
             icon.draw(in: iconRect)
@@ -366,24 +367,8 @@ class FileItemView: NSView {
             var icons: [NSImage] = []
             var seenTypes = Set<String>()
             for url in file.urls {
-                let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? nil
-                let icon: NSImage
-                let typeId: String
-                if let type = type {
-                    typeId = type.identifier
-                    if type == .folder {
-                        icon = NSWorkspace.shared.icon(for: UTType.folder)
-                    } else if type.conforms(to: .image) {
-                        icon = NSWorkspace.shared.icon(for: UTType.jpeg)
-                    } else if type.conforms(to: .plainText) {
-                        icon = NSWorkspace.shared.icon(for: UTType.plainText)
-                    } else {
-                        icon = NSWorkspace.shared.icon(forFile: url.path)
-                    }
-                } else {
-                    typeId = url.pathExtension.lowercased()
-                    icon = NSWorkspace.shared.icon(forFile: url.path)
-                }
+                let icon = getIconForFile(url)
+                let typeId = getTypeIdForFile(url)
                 if !seenTypes.contains(typeId) {
                     icons.append(icon)
                     seenTypes.insert(typeId)
@@ -404,5 +389,98 @@ class FileItemView: NSView {
         ]
         let nameRect = NSRect(x: 24 + iconSize + 12, y: (bounds.height - 20)/2, width: bounds.width - 24 - iconSize - 32, height: 20)
         file.name.draw(in: nameRect, withAttributes: nameAttrs)
+    }
+    
+    private func getIconForFile(_ url: URL) -> NSImage {
+        let pathExtension = url.pathExtension.lowercased()
+        let fileName = url.lastPathComponent.lowercased()
+        
+        // Primero intentar obtener tipo del sistema (para archivos locales normales)
+        if let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) {
+            if type == .folder {
+                return NSWorkspace.shared.icon(for: UTType.folder)
+            } else if type.conforms(to: .image) {
+                return NSWorkspace.shared.icon(for: UTType.image)
+            } else if type.conforms(to: .plainText) {
+                return NSWorkspace.shared.icon(for: UTType.plainText)
+            } else if type.conforms(to: .html) {
+                return NSWorkspace.shared.icon(for: UTType.html)
+            } else if type.conforms(to: .pdf) {
+                return NSWorkspace.shared.icon(for: UTType.pdf)
+            }
+        }
+        
+        // Detectar tipo basado en extensión (para archivos locales normales)
+        if pathExtension == "png" || pathExtension == "jpg" || pathExtension == "jpeg" || pathExtension == "gif" || pathExtension == "tiff" {
+            return NSWorkspace.shared.icon(for: UTType.image)
+        } else if pathExtension == "txt" || pathExtension == "text" {
+            return NSWorkspace.shared.icon(for: UTType.plainText)
+        } else if pathExtension == "pdf" {
+            return NSWorkspace.shared.icon(for: UTType.pdf)
+        } else if pathExtension == "html" || pathExtension == "htm" {
+            return NSWorkspace.shared.icon(for: UTType.html)
+        }
+        
+        // Solo para archivos temporales generados por contenido web
+        if url.path.contains("/tmp/") || url.path.contains("TemporaryItems") {
+            if fileName.contains("image_") || fileName.contains("img_") {
+                return NSWorkspace.shared.icon(for: UTType.image)
+            } else if fileName.contains("link_") || fileName.contains("url_") || fileName.contains("_175348") {
+                return NSWorkspace.shared.icon(for: UTType.plainText)
+            } else if fileName.contains("text_") || fileName.contains("txt_") {
+                return NSWorkspace.shared.icon(for: UTType.plainText)
+            } else if fileName.contains("html_") || fileName.contains("web_") {
+                return NSWorkspace.shared.icon(for: UTType.html)
+            }
+        }
+        
+        // Último fallback
+        return NSWorkspace.shared.icon(forFile: url.path)
+    }
+    
+    private func getTypeIdForFile(_ url: URL) -> String {
+        let pathExtension = url.pathExtension.lowercased()
+        let fileName = url.lastPathComponent.lowercased()
+        
+        // Primero intentar obtener tipo del sistema (para archivos locales normales)
+        if let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) {
+            if type == .folder {
+                return "folder"
+            } else if type.conforms(to: .image) {
+                return "image"
+            } else if type.conforms(to: .plainText) {
+                return "text"
+            } else if type.conforms(to: .html) {
+                return "html"
+            } else if type.conforms(to: .pdf) {
+                return "pdf"
+            }
+        }
+        
+        // Detectar tipo basado en extensión (para archivos locales normales)
+        if pathExtension == "png" || pathExtension == "jpg" || pathExtension == "jpeg" || pathExtension == "gif" || pathExtension == "tiff" {
+            return "image"
+        } else if pathExtension == "txt" || pathExtension == "text" {
+            return "text"
+        } else if pathExtension == "pdf" {
+            return "pdf"
+        } else if pathExtension == "html" || pathExtension == "htm" {
+            return "html"
+        }
+        
+        // Solo para archivos temporales generados por contenido web
+        if url.path.contains("/tmp/") || url.path.contains("TemporaryItems") {
+            if fileName.contains("image_") || fileName.contains("img_") {
+                return "image"
+            } else if fileName.contains("link_") || fileName.contains("url_") || fileName.contains("_175348") {
+                return "text"
+            } else if fileName.contains("text_") || fileName.contains("txt_") {
+                return "text"
+            } else if fileName.contains("html_") || fileName.contains("web_") {
+                return "html"
+            }
+        }
+        
+        return pathExtension
     }
 } 
