@@ -9,6 +9,7 @@ class ShelfWindow: NSWindow {
     private let hideAnimationDuration: TimeInterval = 0.2
     var isShown = false
     private var hideTimer: Timer?
+    var manualMode = false
     let dropAreaHeight: CGFloat = 80
     let itemHeight: CGFloat = 48
     let maxVisibleItems: Int = 5
@@ -79,7 +80,10 @@ class ShelfWindow: NSWindow {
             height: screen.frame.height
         )
         if edgeZone.contains(mouseLoc) {
-            showShelf()
+            // Solo mostrar si no está en modo manual
+            if !manualMode {
+                showShelf()
+            }
         }
     }
 
@@ -128,7 +132,13 @@ class ShelfWindow: NSWindow {
             (self.contentView as? ShelfView)?.layout()
         }
         
-        scheduleAutoHide()
+        // Solo programar auto-ocultamiento si no está en modo manual
+        if !manualMode {
+            scheduleAutoHide()
+        } else {
+            // En modo manual, cancelar cualquier auto-ocultamiento
+            cancelAutoHide()
+        }
     }
 
     func scheduleAutoHide() {
@@ -140,6 +150,16 @@ class ShelfWindow: NSWindow {
 
     func cancelAutoHide() {
         hideTimer?.invalidate()
+    }
+    
+    func enableManualMode() {
+        manualMode = true
+        cancelAutoHide()
+    }
+    
+    func disableManualMode() {
+        manualMode = false
+        // No programar auto-ocultamiento aquí, dejar que funcione normalmente
     }
 
     func hideShelf() {

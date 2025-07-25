@@ -296,7 +296,10 @@ class ShelfView: NSView, DragDetectorDelegate {
     }
 
     override func mouseExited(with event: NSEvent) {
-        windowRef?.scheduleAutoHide()
+        // Solo programar auto-ocultamiento si no está en modo manual
+        if let shelfWindow = windowRef, !shelfWindow.manualMode {
+            windowRef?.scheduleAutoHide()
+        }
     }
 
     private func setupClearButton() {

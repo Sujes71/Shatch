@@ -24,7 +24,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let shelfWindow = window as? ShelfWindow else { return }
         if shelfWindow.isShown {
             shelfWindow.hideShelf()
+            shelfWindow.disableManualMode()
         } else {
+            shelfWindow.enableManualMode()
             shelfWindow.showShelf()
         }
     }
