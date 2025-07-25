@@ -193,12 +193,15 @@ class ShelfView: NSView, DragDetectorDelegate {
     }
 
     private func fileAtPoint(_ point: NSPoint) -> (Int, FileItem)? {
+        // Calcular la posición Y desde abajo hacia arriba
+        var currentY = bounds.height - dropAreaHeight
+        
         for (i, file) in files.enumerated() {
-            let y = bounds.height - dropAreaHeight - CGFloat(i + 1) * itemHeight
-            let rect = NSRect(x: 16, y: y, width: bounds.width - 32, height: itemHeight)
+            let rect = NSRect(x: 16, y: currentY - itemHeight, width: bounds.width - 32, height: itemHeight)
             if rect.contains(point) {
                 return (i, file)
             }
+            currentY -= itemHeight
         }
         return nil
     }
@@ -347,6 +350,7 @@ extension ShelfView: NSDraggingSource {
 class FileItemView: NSView {
     let file: FileItem
     let iconSize: CGFloat
+    
     init(file: FileItem, frame: NSRect, iconSize: CGFloat) {
         self.file = file
         self.iconSize = iconSize
@@ -392,61 +396,6 @@ class FileItemView: NSView {
     }
     
     private func getIconForFile(_ url: URL) -> NSImage {
-        let pathExtension = url.pathExtension.lowercased()
-        let fileName = url.lastPathComponent.lowercased()
-        
-        // Primero intentar obtener tipo del sistema (para archivos locales normales)
-        if let type = (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType) {
-            if type == .folder {
-                return NSWorkspace.shared.icon(for: UTType.folder)
-            } else if type.conforms(to: .image) {
-                // Intentar crear miniatura real de la imagen
-                if let thumbnail = getImageThumbnail(for: url) {
-                    return thumbnail
-                }
-                return createImageIcon()
-            } else if type.conforms(to: .plainText) {
-                return NSWorkspace.shared.icon(for: UTType.plainText)
-            } else if type.conforms(to: .html) {
-                return NSWorkspace.shared.icon(for: UTType.html)
-            } else if type.conforms(to: .pdf) {
-                return NSWorkspace.shared.icon(for: UTType.pdf)
-            }
-        }
-        
-        // Detectar tipo basado en extensión (para archivos locales normales)
-        if pathExtension == "png" || pathExtension == "jpg" || pathExtension == "jpeg" || pathExtension == "gif" || pathExtension == "tiff" {
-            // Intentar crear miniatura real de la imagen
-            if let thumbnail = getImageThumbnail(for: url) {
-                return thumbnail
-            }
-            return createImageIcon()
-        } else if pathExtension == "txt" || pathExtension == "text" {
-            return NSWorkspace.shared.icon(for: UTType.plainText)
-        } else if pathExtension == "pdf" {
-            return NSWorkspace.shared.icon(for: UTType.pdf)
-        } else if pathExtension == "html" || pathExtension == "htm" {
-            return NSWorkspace.shared.icon(for: UTType.html)
-        }
-        
-        // Solo para archivos temporales generados por contenido web
-        if url.path.contains("/tmp/") || url.path.contains("TemporaryItems") {
-            if fileName.contains("image_") || fileName.contains("img_") {
-                // Intentar crear miniatura real de la imagen
-                if let thumbnail = getImageThumbnail(for: url) {
-                    return thumbnail
-                }
-                return createImageIcon()
-            } else if fileName.contains("link_") || fileName.contains("url_") || fileName.contains("_175348") {
-                return NSWorkspace.shared.icon(for: UTType.plainText)
-            } else if fileName.contains("text_") || fileName.contains("txt_") {
-                return NSWorkspace.shared.icon(for: UTType.plainText)
-            } else if fileName.contains("html_") || fileName.contains("web_") {
-                return NSWorkspace.shared.icon(for: UTType.html)
-            }
-        }
-        
-        // Último fallback
         return NSWorkspace.shared.icon(forFile: url.path)
     }
     
@@ -496,32 +445,5 @@ class FileItemView: NSView {
         return pathExtension
     }
     
-    private func createImageIcon() -> NSImage {
-        // Intentar cargar la imagen real y crear una miniatura
-        return NSImage(size: NSSize(width: 32, height: 32))
-    }
-    
-    private func getImageThumbnail(for url: URL) -> NSImage? {
-        guard let image = NSImage(contentsOf: url) else { return nil }
-        
-        let thumbnailSize = NSSize(width: 32, height: 32)
-        let thumbnail = NSImage(size: thumbnailSize)
-        
-        thumbnail.lockFocus()
-        
-        // Calcular el rectángulo para mantener la proporción
-        let imageSize = image.size
-        let scale = min(thumbnailSize.width / imageSize.width, thumbnailSize.height / imageSize.height)
-        let scaledSize = NSSize(width: imageSize.width * scale, height: imageSize.height * scale)
-        let x = (thumbnailSize.width - scaledSize.width) / 2
-        let y = (thumbnailSize.height - scaledSize.height) / 2
-        let rect = NSRect(x: x, y: y, width: scaledSize.width, height: scaledSize.height)
-        
-        // Dibujar la imagen escalada
-        image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
-        
-        thumbnail.unlockFocus()
-        
-        return thumbnail
-    }
+
 } 
