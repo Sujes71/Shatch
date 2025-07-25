@@ -8,11 +8,6 @@ class ShelfView: NSView, DragDetectorDelegate {
     private let itemHeight: CGFloat = 48
     private let iconSize: CGFloat = 32
     private var draggingIndex: Int? = nil
-    var onFileCountChanged: ((Int) -> Void)?
-    private let maxColumns = 3
-    private let maxRows = 5
-    private var scrollOffset: CGFloat = 0
-    private let scrollBarWidth: CGFloat = 8
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -53,7 +48,6 @@ class ShelfView: NSView, DragDetectorDelegate {
 
     func didAddFiles(_ files: [FileItem]) {
         self.files.append(contentsOf: files)
-        onFileCountChanged?(self.files.count)
         setNeedsDisplay(bounds)
     }
 
@@ -74,28 +68,10 @@ class ShelfView: NSView, DragDetectorDelegate {
         let plusSize = plus.size(withAttributes: plusAttrs)
         let plusPoint = NSPoint(x: dropRect.midX - plusSize.width/2, y: dropRect.midY - plusSize.height/2)
         plus.draw(at: plusPoint, withAttributes: plusAttrs)
-        // Mensaje
-        let msgAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: SolarizedTheme.base0,
-            .font: NSFont.systemFont(ofSize: 16)
-        ]
-        let msg = files.isEmpty ? "Drop files here" : "Add more files"
-        let msgSize = msg.size(withAttributes: msgAttrs)
-        let msgPoint = NSPoint(x: dropRect.midX - msgSize.width/2, y: dropRect.minY + 12)
-        msg.draw(at: msgPoint, withAttributes: msgAttrs)
-        // Grid de archivos/carpeta
-        let columns = min(maxColumns, max(1, (files.count + maxRows - 1) / maxRows))
-        let rows = files.count == 0 ? 0 : ((files.count - 1) / columns + 1)
-        let visibleRows = min(rows, maxRows)
-        let gridHeight = CGFloat(visibleRows) * itemHeight
-        let startY = bounds.height - dropAreaHeight - itemHeight
+        // Lista de archivos/carpeta
         for (i, file) in files.enumerated() {
-            let col = i / maxRows
-            let row = i % maxRows
-            let x = CGFloat(col) * (bounds.width / CGFloat(columns)) + 24
-            let y = startY - CGFloat(row) * itemHeight - scrollOffset
-            if y < 0 || y > bounds.height - dropAreaHeight { continue }
-            let iconRect = NSRect(x: x, y: y + (itemHeight - iconSize)/2, width: iconSize, height: iconSize)
+            let y = bounds.height - dropAreaHeight - CGFloat(i + 1) * itemHeight
+            let iconRect = NSRect(x: 24, y: y + (itemHeight - iconSize)/2, width: iconSize, height: iconSize)
             let icon = NSWorkspace.shared.icon(forFile: file.url.path)
             icon.size = NSSize(width: iconSize, height: iconSize)
             icon.draw(in: iconRect)
@@ -103,16 +79,8 @@ class ShelfView: NSView, DragDetectorDelegate {
                 .foregroundColor: SolarizedTheme.base0,
                 .font: NSFont.systemFont(ofSize: 15)
             ]
-            let nameRect = NSRect(x: x + iconSize + 12, y: y + (itemHeight - 20)/2, width: (bounds.width / CGFloat(columns)) - iconSize - 32, height: 20)
+            let nameRect = NSRect(x: 24 + iconSize + 12, y: y + (itemHeight - 20)/2, width: bounds.width - 24 - iconSize - 32, height: 20)
             file.name.draw(in: nameRect, withAttributes: nameAttrs)
-        }
-        // Scrollbar si hay más de 15 archivos
-        if rows > maxRows {
-            let barHeight = gridHeight * (CGFloat(maxRows) / CGFloat(rows))
-            let barY = bounds.height - dropAreaHeight - barHeight - (scrollOffset / (CGFloat(rows) * itemHeight - gridHeight)) * (gridHeight - barHeight)
-            let barRect = NSRect(x: bounds.width - scrollBarWidth - 4, y: barY, width: scrollBarWidth, height: barHeight)
-            SolarizedTheme.base01.setFill()
-            NSBezierPath(roundedRect: barRect, xRadius: 4, yRadius: 4).fill()
         }
     }
 
@@ -134,7 +102,6 @@ class ShelfView: NSView, DragDetectorDelegate {
         let index = sender.tag
         guard files.indices.contains(index) else { return }
         files.remove(at: index)
-        onFileCountChanged?(files.count)
         setNeedsDisplay(bounds)
     }
 

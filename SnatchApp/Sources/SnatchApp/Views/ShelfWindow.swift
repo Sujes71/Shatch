@@ -2,24 +2,21 @@ import Cocoa
 
 class ShelfWindow: NSWindow {
     private let tabWidth: CGFloat = 16
-    private let minWidth: CGFloat = 320
-    private let maxWidth: CGFloat = 960 // 3 columnas
-    private let minHeight: CGFloat = 80 // solo drop
-    private let itemHeight: CGFloat = 48
-    private let dropAreaHeight: CGFloat = 80
+    private let fullWidth: CGFloat = 320
+    private let windowHeight: CGFloat = 400
     private let animationDuration: TimeInterval = 0.25
     private var isShown = false
     private var hideTimer: Timer?
-    private var fileCount: Int = 0 // para ajustar tamaño
 
     init() {
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-        let y = screenFrame.midY - minHeight / 2
+        let y = screenFrame.midY - windowHeight / 2
+        // Completamente fuera de la pantalla al arrancar
         let hiddenRect = NSRect(
-            x: screenFrame.maxX + 10,
+            x: screenFrame.maxX + 10, // fuera de la pantalla
             y: y,
-            width: minWidth,
-            height: minHeight
+            width: fullWidth,
+            height: windowHeight
         )
         super.init(
             contentRect: hiddenRect,
@@ -28,7 +25,7 @@ class ShelfWindow: NSWindow {
             defer: false
         )
         self.isOpaque = false
-        self.backgroundColor = SolarizedTheme.base03
+        self.backgroundColor = .clear
         self.level = .floating
         self.hasShadow = true
         self.ignoresMouseEvents = false
@@ -36,10 +33,10 @@ class ShelfWindow: NSWindow {
         self.titleVisibility = .hidden
         self.titlebarAppearsTransparent = true
         self.isMovableByWindowBackground = false
-        let shelfView = ShelfView(frame: NSRect(x: 0, y: 0, width: minWidth, height: minHeight))
-        shelfView.onFileCountChanged = { [weak self] count in
-            self?.adjustWindowSize(for: count)
-        }
+        let shelfView = ShelfView(frame: NSRect(x: 0, y: 0, width: fullWidth, height: windowHeight))
+        shelfView.wantsLayer = true
+        shelfView.layer?.cornerRadius = 28
+        shelfView.layer?.masksToBounds = true
         self.contentView = shelfView
         startEdgeDetection()
     }
@@ -69,12 +66,12 @@ class ShelfWindow: NSWindow {
         isShown = true
         hideTimer?.invalidate()
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-        let y = screenFrame.midY - minHeight / 2
+        let y = screenFrame.midY - windowHeight / 2
         let shownRect = NSRect(
-            x: screenFrame.maxX - minWidth,
+            x: screenFrame.maxX - fullWidth,
             y: y,
-            width: minWidth,
-            height: minHeight
+            width: fullWidth,
+            height: windowHeight
         )
         setFrame(shownRect, display: true, animate: true)
         scheduleAutoHide()
@@ -91,27 +88,13 @@ class ShelfWindow: NSWindow {
         guard isShown else { return }
         isShown = false
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-        let y = screenFrame.midY - minHeight / 2
+        let y = screenFrame.midY - windowHeight / 2
         let hiddenRect = NSRect(
             x: screenFrame.maxX + 10, // fuera de la pantalla
             y: y,
-            width: minWidth,
-            height: minHeight
+            width: fullWidth,
+            height: windowHeight
         )
         setFrame(hiddenRect, display: true, animate: true)
-    }
-
-    private func adjustWindowSize(for fileCount: Int) {
-        self.fileCount = fileCount
-        let columns = min(3, max(1, (fileCount + 4) / 5))
-        let rows = fileCount == 0 ? 0 : ((fileCount - 1) / columns + 1)
-        let width = minWidth * CGFloat(columns)
-        let height = max(minHeight, dropAreaHeight + CGFloat(rows) * itemHeight)
-        let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-        let y = screenFrame.midY - height / 2
-        let x = screenFrame.maxX - width
-        let newRect = NSRect(x: x, y: y, width: width, height: height)
-        setFrame(newRect, display: true, animate: true)
-        (contentView as? ShelfView)?.frame = NSRect(x: 0, y: 0, width: width, height: height)
     }
 } 
