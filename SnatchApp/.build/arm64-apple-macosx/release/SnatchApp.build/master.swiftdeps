@@ -1,0 +1,13 @@
+version: "Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)"
+options: "0d6681f00cb86509bd7f7ef5e350740750d4c16b730d01f5aec51a74ffef07d6"
+build_start_time: [1753487683, 133944000]
+build_end_time: [1753487711, 647127000]
+inputs:
+  ? "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift"
+  : [1753487682, 944537379]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift": [1753481140, 321694151]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift": [1753475347, 14223162]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift": [1753453777, 49080622]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift": [1753485874, 584368434]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift": [1753483520, 531436584]
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift": [1753486285, 480621376]

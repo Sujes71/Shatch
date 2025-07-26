@@ -75,6 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 // Punto de entrada manual para SPM
 let app = NSApplication.shared
+app.setActivationPolicy(.accessory) // Esto evita que aparezca en el dock
 let delegate = AppDelegate()
 app.delegate = delegate
 app.run() 

@@ -1,0 +1,42 @@
+{
+  "": {
+    "dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SnatchApp.d",
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SnatchApp.o",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/master.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swiftdeps"
+  },
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift": {
+    "object": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swiftdeps"
+  }
+}
