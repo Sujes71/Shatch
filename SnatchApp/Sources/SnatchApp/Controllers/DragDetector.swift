@@ -255,9 +255,46 @@ class DragDetector {
     }
     
     private func hashImage(_ image: NSImage) -> String {
-        // Crear un hash simple basado en el tamaño y datos de la imagen
-        guard let tiffData = image.tiffRepresentation else { return "unknown" }
+        // Crear un hash más robusto basado en el contenido de la imagen
+        guard let tiffData = image.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiffData) else { 
+            return "unknown" 
+        }
+        
         let size = image.size
-        return "\(size.width)x\(size.height)_\(tiffData.count)"
+        let width = Int(size.width)
+        let height = Int(size.height)
+        
+        // Crear un hash basado en muestras de píxeles
+        var hashComponents: [String] = []
+        hashComponents.append("\(width)x\(height)")
+        
+        // Muestrear píxeles en diferentes posiciones para crear un hash único
+        let samplePoints = [
+            (0, 0),                    // Esquina superior izquierda
+            (width/2, 0),              // Centro superior
+            (width-1, 0),              // Esquina superior derecha
+            (0, height/2),             // Centro izquierda
+            (width/2, height/2),       // Centro
+            (width-1, height/2),       // Centro derecha
+            (0, height-1),             // Esquina inferior izquierda
+            (width/2, height-1),       // Centro inferior
+            (width-1, height-1)        // Esquina inferior derecha
+        ]
+        
+        for (x, y) in samplePoints {
+            if x < width && y < height {
+                let color = bitmap.colorAt(x: x, y: y) ?? NSColor.clear
+                let red = Int(color.redComponent * 255)
+                let green = Int(color.greenComponent * 255)
+                let blue = Int(color.blueComponent * 255)
+                hashComponents.append("\(red),\(green),\(blue)")
+            }
+        }
+        
+        // También incluir el hash de los datos TIFF como respaldo
+        hashComponents.append("\(tiffData.count)")
+        
+        return hashComponents.joined(separator: "_")
     }
 } 

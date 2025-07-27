@@ -4,91 +4,76 @@ client:
 tools: {}
 targets:
   "PackageStructure": ["<PackageStructure>"]
-  "SnatchApp-arm64-apple-macosx15.0-debug.exe": ["<SnatchApp-arm64-apple-macosx15.0-debug.exe>"]
-  "SnatchApp-arm64-apple-macosx15.0-debug.module": ["<SnatchApp-arm64-apple-macosx15.0-debug.module>"]
-  "main": ["<SnatchApp-arm64-apple-macosx15.0-debug.exe>","<SnatchApp-arm64-apple-macosx15.0-debug.module>"]
-  "test": ["<SnatchApp-arm64-apple-macosx15.0-debug.exe>","<SnatchApp-arm64-apple-macosx15.0-debug.module>"]
+  "SnatchApp-arm64-apple-macosx15.0-release.exe": ["<SnatchApp-arm64-apple-macosx15.0-release.exe>"]
+  "SnatchApp-arm64-apple-macosx15.0-release.module": ["<SnatchApp-arm64-apple-macosx15.0-release.module>"]
+  "main": ["<SnatchApp-arm64-apple-macosx15.0-release.exe>","<SnatchApp-arm64-apple-macosx15.0-release.module>"]
+  "test": ["<SnatchApp-arm64-apple-macosx15.0-release.exe>","<SnatchApp-arm64-apple-macosx15.0-release.module>"]
 default: "main"
 nodes:
   "/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/":
     is-directory-structure: true
     content-exclusion-patterns: [".git",".build"]
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp":
-    is-mutated: true
 commands:
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp-entitlement.plist":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/sources":
     tool: write-auxiliary-file
-    inputs: ["<entitlement-plist>","<com.apple.security.get-task-allow>"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp-entitlement.plist"]
-    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp-entitlement.plist"
+    inputs: ["<sources-file-list>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/sources"]
+    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/sources"
 
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/sources":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.product/Objects.LinkFileList":
     tool: write-auxiliary-file
-    inputs: ["<sources-file-list>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/sources"]
-    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/sources"
+    inputs: ["<link-file-list>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swift.o"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.product/Objects.LinkFileList"
 
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.product/Objects.LinkFileList":
-    tool: write-auxiliary-file
-    inputs: ["<link-file-list>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/resource_bundle_accessor.swift.o"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.product/Objects.LinkFileList"]
-    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.product/Objects.LinkFileList"
-
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/Info.plist":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/Info.plist":
     tool: copy-tool
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/Info.plist"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/Info.plist"]
-    description: "Copying /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/Info.plist"
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/Info.plist"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/Info.plist"]
+    description: "Copying /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/Info.plist"
 
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings":
     tool: copy-tool
     inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Resources/en.lproj/Localizable.strings"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings"]
     description: "Copying /Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Resources/en.lproj/Localizable.strings"
 
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings":
     tool: copy-tool
     inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Resources/es.lproj/Localizable.strings"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings"]
     description: "Copying /Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Resources/es.lproj/Localizable.strings"
 
-  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt":
+  "/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt":
     tool: write-auxiliary-file
     inputs: ["<swift-get-version>","/Library/Developer/CommandLineTools/usr/bin/swiftc"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"]
     always-out-of-date: "true"
-    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    description: "Write auxiliary file /Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
 
-  "<SnatchApp-arm64-apple-macosx15.0-debug.exe>":
+  "<SnatchApp-arm64-apple-macosx15.0-release.exe>":
     tool: phony
-    inputs: ["<SnatchApp-arm64-apple-macosx15.0-debug.exe-CodeSigning>"]
-    outputs: ["<SnatchApp-arm64-apple-macosx15.0-debug.exe>"]
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp"]
+    outputs: ["<SnatchApp-arm64-apple-macosx15.0-release.exe>"]
 
-  "<SnatchApp-arm64-apple-macosx15.0-debug.module>":
+  "<SnatchApp-arm64-apple-macosx15.0-release.module>":
     tool: phony
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Modules/SnatchApp.swiftmodule"]
-    outputs: ["<SnatchApp-arm64-apple-macosx15.0-debug.module>"]
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Modules/SnatchApp.swiftmodule"]
+    outputs: ["<SnatchApp-arm64-apple-macosx15.0-release.module>"]
 
-  "C.SnatchApp-arm64-apple-macosx15.0-debug.exe":
+  "C.SnatchApp-arm64-apple-macosx15.0-release.exe":
     tool: shell
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.product/Objects.LinkFileList"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp"]
-    description: "Linking ./.build/arm64-apple-macosx/debug/SnatchApp"
-    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-L","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug","-o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp","-module-name","SnatchApp","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-alias","-Xlinker","_SnatchApp_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.product/Objects.LinkFileList","-target","arm64-apple-macosx13.0","-Xlinker","-add_ast_path","-Xlinker","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Modules/SnatchApp.swiftmodule","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xlinker","-rpath","-Xlinker","/Library/Developer/CommandLineTools/Library/Developer/Frameworks"]
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.product/Objects.LinkFileList"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp"]
+    description: "Linking ./.build/arm64-apple-macosx/release/SnatchApp"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-L","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release","-o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp","-module-name","SnatchApp","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-dead_strip","-Xlinker","-alias","-Xlinker","_SnatchApp_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.product/Objects.LinkFileList","-target","arm64-apple-macosx13.0","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xlinker","-rpath","-Xlinker","/Library/Developer/CommandLineTools/Library/Developer/Frameworks"]
 
-  "C.SnatchApp-arm64-apple-macosx15.0-debug.exe-entitlements":
+  "C.SnatchApp-arm64-apple-macosx15.0-release.module":
     tool: shell
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp-entitlement.plist"]
-    outputs: ["<SnatchApp-arm64-apple-macosx15.0-debug.exe-CodeSigning>"]
-    description: "Applying debug entitlements to ./.build/arm64-apple-macosx/debug/SnatchApp"
-    args: ["codesign","--force","--sign","-","--entitlements","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp-entitlement.plist","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp"]
-
-  "C.SnatchApp-arm64-apple-macosx15.0-debug.module":
-    tool: shell
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt","<SnatchApp-arm64-apple-macosx15.0-debug.module-resources>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/sources"]
-    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Modules/SnatchApp.swiftmodule"]
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Controllers/DragDetector.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Models/FileItem.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Utils/SolarizedTheme.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfView.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/Views/ShelfWindow.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/Sources/SnatchApp/main.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DerivedSources/resource_bundle_accessor.swift","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt","<SnatchApp-arm64-apple-macosx15.0-release.module-resources>","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/sources"]
+    outputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/DragDetector.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/FileItem.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/SolarizedTheme.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfView.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/ShelfWindow.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/main.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/resource_bundle_accessor.swift.o","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Modules/SnatchApp.swiftmodule"]
     description: "Compiling Swift Module 'SnatchApp' (7 sources)"
-    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-module-name","SnatchApp","-emit-dependencies","-emit-module","-emit-module-path","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Modules/SnatchApp.swiftmodule","-output-file-map","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/output-file-map.json","-incremental","-c","@/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/SnatchApp.build/sources","-I","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx13.0","-enable-batch-mode","-index-store-path","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j14","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","SnatchApp_main","-color-diagnostics","-swift-version","5","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xcc","-isysroot","-Xcc","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-Xcc","-fPIC","-Xcc","-g","-package-name","snatchapp"]
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-module-name","SnatchApp","-emit-dependencies","-emit-module","-emit-module-path","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Modules/SnatchApp.swiftmodule","-output-file-map","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/output-file-map.json","-whole-module-optimization","-num-threads","14","-c","@/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/SnatchApp.build/sources","-I","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Modules","-target","arm64-apple-macosx13.0","-O","-j14","-DSWIFT_PACKAGE","-module-cache-path","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","SnatchApp_main","-color-diagnostics","-swift-version","5","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xcc","-isysroot","-Xcc","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-Xcc","-fPIC","-Xcc","-g","-package-name","snatchapp"]
 
   "PackageStructure":
     tool: package-structure-tool
@@ -97,8 +82,8 @@ commands:
     description: "Planning build"
     allow-missing-inputs: true
 
-  "SnatchApp-arm64-apple-macosx15.0-debug.module-resources":
+  "SnatchApp-arm64-apple-macosx15.0-release.module-resources":
     tool: phony
-    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/debug/Snatch_SnatchApp.bundle/Info.plist"]
-    outputs: ["<SnatchApp-arm64-apple-macosx15.0-debug.module-resources>"]
+    inputs: ["/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/en.lproj/Localizable.strings","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/es.lproj/Localizable.strings","/Users/zedven/IdeaProjects/Snatch/SnatchApp/.build/arm64-apple-macosx/release/Snatch_SnatchApp.bundle/Info.plist"]
+    outputs: ["<SnatchApp-arm64-apple-macosx15.0-release.module-resources>"]
 
